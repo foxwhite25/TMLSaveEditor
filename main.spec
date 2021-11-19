@@ -43,4 +43,3 @@ coll = COLLECT(exe,
                upx=True,
                upx_exclude=[],
                name='main')
-copyfile(r'C:\Users\DELL\PycharmProjects\TMLSaveEditor\Sprite', r'C:\Users\DELL\PycharmProjects\TMLSaveEditor\dist\main\Sprite')

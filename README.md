@@ -3,17 +3,17 @@
 [![License: MIT](https://img.shields.io/badge/License-GPT3-green.svg)](https://github.com/foxwhite25/TMLSaveEditor/blob/main/LICENSE)
 
 * [简介](#简介)
-* [目前可以修改的东西](#currently-editable)
+* [目前可以修改的东西](#目前可以修改的东西)
 * [截图](#截图)
 * [安装](#安装)
-    + [通用](#general)
-    + [使用python版本](#installing-the-python-version)
-* [存档文件路径](#save-file-locations)
+    + [通用](#通用)
+    + [使用python版本](#使用python版本)
+* [存档文件路径](#存档文件路径)
 * [使用方法](#使用方法)
 * [更新日志](#更新日志)
-* [为什么这个程序运行不了?](#the-application-is-not-working-)
-* [公告](#notice)
-* [编译](#building)
+* [为什么这个程序运行不了?](#为什么这个程序运行不了?)
+* [公告](#公告)
+* [编译](#编译)
 
 ## 简介
 
@@ -54,7 +54,7 @@ Windows系统也有 `.exe` 的版本.
 ## 安装
 
 ### 通用
-如果你已经有安装了Python，你可以直接下载`master`分支然后前往[使用Python版本](#installing-the-python-version).
+如果你已经有安装了Python，你可以直接下载`master`分支然后前往[使用Python版本](#使用Python版本).
 这样的安装在大部分OS都可用 (Windows，Linux，macOS)。
 
 **如果你在Windows系统并且没有安装Python**，你可以下载一个包含`.exe` 的 `.zip` 文件。 你可以在 [releases](https://github.com/foxwhite25/TMLSaveEditor/releases) 找到下载。这个压缩包包含了Python和所有需要的前置。
