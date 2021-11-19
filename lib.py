@@ -192,13 +192,15 @@ class ButtonsOption:
     def inf_bev(self):
         toast("成功添加", color='#2188ff')
         for n, m in self.save.data['storagePartial']['beverages'].items():
-            self.save.data['storagePartial']['beverages'][n] = -1
+            if n == '0':
+                continue
+            self.save.data['storagePartial']['beverages'][n] = 114514
 
     def construct(self):
         with use_scope('options', clear=True):
             put_button("所有现有的食材给我来五十份！", onclick=self.give_ing)
             put_button("所有现有的酒水给我来五十份！", onclick=self.give_bev)
-            put_button("所有现有的食材都变成114514！", onclick=self.inf_ing)
+            put_button("所有现有的食材都变成无限！！", onclick=self.inf_ing)
             put_button("所有现有的酒水都变成无限！！", onclick=self.inf_bev)
 
     def saves(self):
