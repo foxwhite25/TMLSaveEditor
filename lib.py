@@ -64,7 +64,9 @@ class IngOption:
         with use_scope('options', clear=True):
             ingredients_table = [['ID', '图标', '名称', '数量', '删除']] + \
                                 [[i, put_image(open(f'./Sprite/Ingredient_{i}.png', 'rb').read()), 'PlaceHolder',
-                                  put_input(f'ing_{i}', value=j), put_buttons([f"删除{i}"], onclick=partial(self.del_item))] for i, j in self.ingredients.items()]
+                                  put_input(f'ing_{i}', value=j),
+                                  put_buttons([f"删除{i}"], onclick=partial(self.del_item))] for i, j in
+                                 self.ingredients.items()]
             put_table(ingredients_table)
             put_text("添加食材:")
             put_row([
@@ -122,7 +124,9 @@ class BevOption:
         with use_scope('options', clear=True):
             beverages_table = [['ID', '图标', '名称', '数量', '删除']] + \
                               [[i, put_image(open(f'./Sprite/Beverages_{i}.png', 'rb').read()), 'PlaceHolder',
-                                put_input(f'bev_{i}', value=j, type=NUMBER), put_buttons([f"删除{i}"], onclick=partial(self.del_item))] for i, j in self.beverages.items()]
+                                put_input(f'bev_{i}', value=j, type=NUMBER),
+                                put_buttons([f"删除{i}"], onclick=partial(self.del_item))] for i, j in
+                               self.beverages.items()]
             put_table(beverages_table)
             put_text("添加酒水:")
             put_row([
@@ -180,10 +184,22 @@ class ButtonsOption:
                 continue
             self.save.data['storagePartial']['beverages'][n] += 50
 
+    def inf_ing(self):
+        toast("成功添加", color='#2188ff')
+        for n, m in self.save.data['storagePartial']['ingredients'].items():
+            self.save.data['storagePartial']['ingredients'][n] = 114514
+
+    def inf_bev(self):
+        toast("成功添加", color='#2188ff')
+        for n, m in self.save.data['storagePartial']['beverages'].items():
+            self.save.data['storagePartial']['beverages'][n] = -1
+
     def construct(self):
         with use_scope('options', clear=True):
             put_button("所有现有的食材给我来五十份！", onclick=self.give_ing)
             put_button("所有现有的酒水给我来五十份！", onclick=self.give_bev)
+            put_button("所有现有的食材都变成114514！", onclick=self.inf_ing)
+            put_button("所有现有的酒水都变成无限！！", onclick=self.inf_bev)
 
     def saves(self):
         return self.save
