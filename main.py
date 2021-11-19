@@ -1,14 +1,28 @@
-from tkinter import Tk, filedialog
-
-from pywebio import config
+import threading
+from tkinter import Tk
 
 from lib import *
 from pywebio.input import *
 from pywebio.output import *
 from pywebio.pin import *
 
+op = None
 
-@config(css_file='https://github.com/foxwhite25/TMLSaveEditor/blob/main/style.css')
+
+def option_update(file):
+    global op
+    op = BasicOption(file)
+    while True:
+        changed = pin_wait_change('module')
+        op.saves()
+        if changed['value'] == '基本属性':
+            op = BasicOption(file)
+        elif changed['value'] == '食材':
+            op = IngOption(file)
+        elif changed['value'] == '酒水':
+            op = BevOption(file)
+
+
 def main():
     root = Tk()
     root.withdraw()
@@ -16,19 +30,13 @@ def main():
     put_text("选择你要编辑的东西")
     put_select("module", ["基本属性", "食材", "酒水"])
     set_scope("options")
+    set_scope("save")
     toast(f'加载档案成功，上次保存日期为{file.data["realSaveTimeCode"]}', position='center', color='#2188ff')
-
-    op = BasicOption(file)
-    while True:
-        changed = pin_wait_change('module')
-        op.saves()
-        toast(f'修改成功', position='center', color='#2188ff')
-        if changed['value'] == '基本属性':
-            op = BasicOption(file)
-        elif changed['value'] == '食材':
-            op = IngOption(file)
-        elif changed['value'] == '酒水':
-            op = BevOption(file)
+    with use_scope('save'):
+        put_text('保存选项:')
+        put_button('保存至原路径，请确保你已经备份了存档', onclick=file.save)
+    option = threading.Thread(target=option_update, args=(file,))
+    option.start()
 
 
 if __name__ == '__main__':

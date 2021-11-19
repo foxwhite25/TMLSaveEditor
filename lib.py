@@ -1,3 +1,4 @@
+import threading
 from functools import partial
 from tkinter import filedialog
 from pywebio.input import *
@@ -11,6 +12,11 @@ class SaveFile:
         self.file_location: str = filedialog.askopenfilename(filetypes=[("Memory file", "*.memory")])
         with open(self.file_location, encoding='utf-8') as f:
             self.data: dict = json.load(f)
+
+    def save(self):
+        with open(self.file_location, 'w', encoding='utf-8') as f:
+            json.dump(self.data, f)
+        toast(f'保存成功！', position='center', color='#2188ff')
 
 
 class IngOption:
@@ -62,9 +68,19 @@ class BevOption:
     def __init__(self, save: SaveFile):
         self.save = save
         self.beverages = self.save.data['storagePartial']['beverages']
+        self.pin = [f'bev_{i}' for i in range(29)]
         self.construct()
+        self.thread = threading.Thread(target=self.monitor)
+        self.thread.start()
 
-    def add_item(self):
+    def monitor(self):
+        while True:
+            changed = pin_wait_change(*self.pin)
+            iid = changed['name'].removeprefix('bev_')
+            count = changed['value']
+            self.beverages[iid] = count
+
+    def add_item(self, _):
         iid = pin['item_id']
         count = pin['item_count']
         if count is None or iid is None:
@@ -80,13 +96,14 @@ class BevOption:
             toast(f'该酒水已经存在，请直接修改数量', position='center', color='#FF0000')
             return
         self.beverages[iid] = count
+        self.pin.append(f'bev_{iid}')
         self.construct()
 
     def construct(self):
         with use_scope('options', clear=True):
             beverages_table = [['ID', '图标', '名称', '数量']] + \
                               [[i, put_image(open(f'./Sprite/Beverages_{i}.png', 'rb').read()), 'PlaceHolder',
-                                put_input(f'bev_{i}', value=j)] for i, j in self.beverages.items()]
+                                put_input(f'bev_{i}', value=j, type=NUMBER)] for i, j in self.beverages.items()]
             put_table(beverages_table)
             put_text("添加酒水:")
             put_row([
@@ -96,7 +113,7 @@ class BevOption:
 
             put_buttons(['确认添加'], onclick=partial(self.add_item))
 
-    def save(self):
+    def saves(self):
         for i, j in self.beverages.items():
             self.beverages[i] = pin[f'bev_{i}']
         self.save.data['storagePartial']['beverages'] = self.beverages
