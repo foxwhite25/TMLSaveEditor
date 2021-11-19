@@ -7,10 +7,8 @@ from pywebio.input import *
 from pywebio.output import *
 from pywebio.pin import *
 
-style = ''''''
 
-
-@config(css_style=style)
+@config(css_file='https://github.com/foxwhite25/TMLSaveEditor/blob/main/style.css')
 def main():
     root = Tk()
     root.withdraw()
