@@ -49,7 +49,7 @@ Windows系统也有 `.exe` 的版本.
 
 ## 截图
 
-![img.png](img.png)
+![img_1.png](img_1.png)
 
 ## 安装
 

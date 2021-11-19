@@ -39,15 +39,17 @@ class IngOption:
             count = changed['value']
             self.ingredients[iid] = int(count)
 
+    def del_item(self, msg):
+        msg = msg.replace("删除", "")
+        self.ingredients.pop(msg)
+        self.construct()
+
     def add_item(self, _):
         iid = pin['item_id']
         count = pin['item_count']
         print(f"Add item {iid}x{count}")
         if count is None or iid is None:
             toast(f'食材数量或者ID未填写', position='center', color='#FF0000')
-            return
-        if count < 1:
-            toast(f'食材数量必须大于一', position='center', color='#FF0000')
             return
         if not iid.isnumeric():
             toast(f'{iid} 不是一个合法的食材ID', position='center', color='#FF0000')
@@ -60,9 +62,9 @@ class IngOption:
 
     def construct(self):
         with use_scope('options', clear=True):
-            ingredients_table = [['ID', '图标', '名称', '数量']] + \
+            ingredients_table = [['ID', '图标', '名称', '数量', '删除']] + \
                                 [[i, put_image(open(f'./Sprite/Ingredient_{i}.png', 'rb').read()), 'PlaceHolder',
-                                  put_input(f'ing_{i}', value=j)] for i, j in self.ingredients.items()]
+                                  put_input(f'ing_{i}', value=j), put_buttons([f"删除{i}"], onclick=partial(self.del_item))] for i, j in self.ingredients.items()]
             put_table(ingredients_table)
             put_text("添加食材:")
             put_row([
@@ -95,14 +97,16 @@ class BevOption:
             count = changed['value']
             self.beverages[iid] = int(count)
 
+    def del_item(self, msg):
+        msg = msg.replace("删除", "")
+        self.beverages.pop(msg)
+        self.construct()
+
     def add_item(self, _):
         iid = pin['item_id']
         count = pin['item_count']
         if count is None or iid is None:
             toast(f'酒水数量或者ID未填写', position='center', color='#FF0000')
-            return
-        if count < 1:
-            toast(f'酒水数量必须大于一', position='center', color='#FF0000')
             return
         if not iid.isnumeric():
             toast(f'{iid} 不是一个合法的酒水ID', position='center', color='#FF0000')
@@ -116,9 +120,9 @@ class BevOption:
 
     def construct(self):
         with use_scope('options', clear=True):
-            beverages_table = [['ID', '图标', '名称', '数量']] + \
+            beverages_table = [['ID', '图标', '名称', '数量', '删除']] + \
                               [[i, put_image(open(f'./Sprite/Beverages_{i}.png', 'rb').read()), 'PlaceHolder',
-                                put_input(f'bev_{i}', value=j, type=NUMBER)] for i, j in self.beverages.items()]
+                                put_input(f'bev_{i}', value=j, type=NUMBER), put_buttons([f"删除{i}"], onclick=partial(self.del_item))] for i, j in self.beverages.items()]
             put_table(beverages_table)
             put_text("添加酒水:")
             put_row([
@@ -175,7 +179,7 @@ class ButtonsOption:
 
     def give_bev(self):
         toast("成功添加")
-        for n in range(1,29):
+        for n in range(1, 29):
             n = str(n)
             if n in self.save.data['storagePartial']['beverages']:
                 self.save.data['storagePartial']['beverages'][n] += 50
@@ -189,3 +193,8 @@ class ButtonsOption:
 
     def saves(self):
         return self.save
+
+
+class RecipesOption:
+    def __init__(self, save: SaveFile):
+        self.save = save
