@@ -169,27 +169,21 @@ class ButtonsOption:
         self.construct()
 
     def give_ing(self):
-        toast("成功添加")
-        for n in range(39):
-            n = str(n)
-            if n in self.save.data['storagePartial']['ingredients']:
-                self.save.data['storagePartial']['ingredients'][n] += 50
-            else:
-                self.save.data['storagePartial']['ingredients'][n] = 50
+        toast("成功添加", color='#2188ff')
+        for n, m in self.save.data['storagePartial']['ingredients'].items():
+            self.save.data['storagePartial']['ingredients'][n] += 50
 
     def give_bev(self):
-        toast("成功添加")
-        for n in range(1, 29):
-            n = str(n)
-            if n in self.save.data['storagePartial']['beverages']:
-                self.save.data['storagePartial']['beverages'][n] += 50
-            else:
-                self.save.data['storagePartial']['beverages'][n] = 50
+        toast("成功添加", color='#2188ff')
+        for n, m in self.save.data['storagePartial']['beverages'].items():
+            if n == '0':
+                continue
+            self.save.data['storagePartial']['beverages'][n] += 50
 
     def construct(self):
         with use_scope('options', clear=True):
-            put_button("所有食材给我来五十份！", onclick=self.give_ing)
-            put_button("所有酒水给我来五十份！", onclick=self.give_bev)
+            put_button("所有现有的食材给我来五十份！", onclick=self.give_ing)
+            put_button("所有现有的酒水给我来五十份！", onclick=self.give_bev)
 
     def saves(self):
         return self.save
