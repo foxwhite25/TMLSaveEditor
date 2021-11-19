@@ -7,7 +7,7 @@ from pywebio.input import *
 from pywebio.output import *
 from pywebio.pin import *
 
-style = '''.pywebio {background-image: url("./Sprite/Storage_Scroll.png");}'''
+style = ''''''
 
 
 @config(css_style=style)
