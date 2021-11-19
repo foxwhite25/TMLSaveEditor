@@ -6,21 +6,18 @@ from pywebio.input import *
 from pywebio.output import *
 from pywebio.pin import *
 
-op = None
-
 
 def option_update(file):
-    global op
-    op = BasicOption(file)
+    file.op = BasicOption(file)
     while True:
         changed = pin_wait_change('module')
-        op.saves()
+        file.op.saves()
         if changed['value'] == '基本属性':
-            op = BasicOption(file)
+            file.op = BasicOption(file)
         elif changed['value'] == '食材':
-            op = IngOption(file)
+            file.op = IngOption(file)
         elif changed['value'] == '酒水':
-            op = BevOption(file)
+            file.op = BevOption(file)
 
 
 def main():
@@ -35,8 +32,7 @@ def main():
     with use_scope('save'):
         put_text('保存选项:')
         put_button('保存至原路径，请确保你已经备份了存档', onclick=file.save)
-    option = threading.Thread(target=option_update, args=(file,))
-    option.start()
+    option_update(file)
 
 
 if __name__ == '__main__':

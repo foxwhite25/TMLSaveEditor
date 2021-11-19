@@ -9,11 +9,13 @@ import ujson as json
 
 class SaveFile:
     def __init__(self):
+        self.op = None
         self.file_location: str = filedialog.askopenfilename(filetypes=[("Memory file", "*.memory")])
         with open(self.file_location, encoding='utf-8') as f:
             self.data: dict = json.load(f)
 
     def save(self):
+        self.op.saves()
         with open(self.file_location, 'w', encoding='utf-8') as f:
             json.dump(self.data, f)
         toast(f'保存成功！', position='center', color='#2188ff')
@@ -23,11 +25,22 @@ class IngOption:
     def __init__(self, save: SaveFile):
         self.save = save
         self.ingredients = self.save.data['storagePartial']['ingredients']
+        self.pin = [f'ing_{i}' for i in range(39)]
         self.construct()
+        self.thread = threading.Thread(target=self.monitor)
+        self.thread.start()
+
+    def monitor(self):
+        while True:
+            changed = pin_wait_change(*self.pin)
+            iid = changed['name'].removeprefix('ing_')
+            count = changed['value']
+            self.ingredients[iid] = count
 
     def add_item(self, _):
         iid = pin['item_id']
         count = pin['item_count']
+        print(f"Add item {iid}x{count}")
         if count is None or iid is None:
             toast(f'食材数量或者ID未填写', position='center', color='#FF0000')
             return
@@ -138,3 +151,7 @@ class BasicOption:
         self.save.data['playerPartial']['level'] = pin['level']
         self.save.data['playerPartial']['exp'] = pin['exp']
         return self.save
+
+    def monitor(self):
+        _ = pin_wait_change('fund', 'level', 'exp')
+        self.saves()
