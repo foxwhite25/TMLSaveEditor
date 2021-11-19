@@ -45,7 +45,7 @@ class IngOption:
             put_table(ingredients_table)
             put_text("添加食材:")
             put_row([
-                put_input('item_id', placeholder='食材ID', type=TEXT),None,
+                put_input('item_id', placeholder='食材ID', type=TEXT), None,
                 put_input('item_count', placeholder='食材数量', type=NUMBER)
             ])
 
@@ -55,6 +55,51 @@ class IngOption:
         for i, j in self.ingredients.items():
             self.ingredients[i] = pin[f'ing_{i}']
         self.save.data['storagePartial']['ingredients'] = self.ingredients
+        return self.save
+
+
+class BevOption:
+    def __init__(self, save: SaveFile):
+        self.save = save
+        self.beverages = self.save.data['storagePartial']['beverages']
+        self.construct()
+
+    def add_item(self):
+        iid = pin['item_id']
+        count = pin['item_count']
+        if count is None or iid is None:
+            toast(f'酒水数量或者ID未填写', position='center', color='#FF0000')
+            return
+        if count < 1:
+            toast(f'酒水数量必须大于一', position='center', color='#FF0000')
+            return
+        if not iid.isnumeric():
+            toast(f'{iid} 不是一个合法的酒水ID', position='center', color='#FF0000')
+            return
+        if iid in self.beverages:
+            toast(f'该酒水已经存在，请直接修改数量', position='center', color='#FF0000')
+            return
+        self.beverages[iid] = count
+        self.construct()
+
+    def construct(self):
+        with use_scope('options', clear=True):
+            beverages_table = [['ID', '图标', '名称', '数量']] + \
+                              [[i, put_image(open(f'./Sprite/Beverages_{i}.png', 'rb').read()), 'PlaceHolder',
+                                put_input(f'bev_{i}', value=j)] for i, j in self.beverages.items()]
+            put_table(beverages_table)
+            put_text("添加酒水:")
+            put_row([
+                put_input('item_id', placeholder='酒水ID', type=TEXT), None,
+                put_input('item_count', placeholder='酒水数量', type=NUMBER)
+            ])
+
+            put_buttons(['确认添加'], onclick=partial(self.add_item))
+
+    def save(self):
+        for i, j in self.beverages.items():
+            self.beverages[i] = pin[f'bev_{i}']
+        self.save.data['storagePartial']['beverages'] = self.beverages
         return self.save
 
 
