@@ -16,8 +16,10 @@ class SaveFile:
 
     def save(self):
         self.op.saves()
+        for n, m in self.data['storagePartial']['ingredients'].items():
+            self.data['storagePartial']['ingredients'][n] = int(m)
         with open(self.file_location, 'w', encoding='utf-8') as f:
-            json.dump(self.data, f)
+            json.dump(self.data, f, indent=4)
         toast(f'保存成功！', position='center', color='#2188ff')
 
 
@@ -35,7 +37,7 @@ class IngOption:
             changed = pin_wait_change(*self.pin)
             iid = changed['name'].removeprefix('ing_')
             count = changed['value']
-            self.ingredients[iid] = count
+            self.ingredients[iid] = int(count)
 
     def add_item(self, _):
         iid = pin['item_id']
@@ -53,7 +55,7 @@ class IngOption:
         if iid in self.ingredients:
             toast(f'该食材已经存在，请直接修改数量', position='center', color='#FF0000')
             return
-        self.ingredients[iid] = count
+        self.ingredients[iid] = int(count)
         self.construct()
 
     def construct(self):
@@ -72,7 +74,7 @@ class IngOption:
 
     def saves(self):
         for i, j in self.ingredients.items():
-            self.ingredients[i] = pin[f'ing_{i}']
+            self.ingredients[i] = int(pin[f'ing_{i}'])
         self.save.data['storagePartial']['ingredients'] = self.ingredients
         return self.save
 
@@ -91,7 +93,7 @@ class BevOption:
             changed = pin_wait_change(*self.pin)
             iid = changed['name'].removeprefix('bev_')
             count = changed['value']
-            self.beverages[iid] = count
+            self.beverages[iid] = int(count)
 
     def add_item(self, _):
         iid = pin['item_id']
@@ -108,7 +110,7 @@ class BevOption:
         if iid in self.beverages:
             toast(f'该酒水已经存在，请直接修改数量', position='center', color='#FF0000')
             return
-        self.beverages[iid] = count
+        self.beverages[iid] = int(count)
         self.pin.append(f'bev_{iid}')
         self.construct()
 
@@ -128,7 +130,7 @@ class BevOption:
 
     def saves(self):
         for i, j in self.beverages.items():
-            self.beverages[i] = pin[f'bev_{i}']
+            self.beverages[i] = int(pin[f'bev_{i}'])
         self.save.data['storagePartial']['beverages'] = self.beverages
         return self.save
 
@@ -155,3 +157,35 @@ class BasicOption:
     def monitor(self):
         _ = pin_wait_change('fund', 'level', 'exp')
         self.saves()
+
+
+class ButtonsOption:
+    def __init__(self, save: SaveFile):
+        self.save = save
+        self.construct()
+
+    def give_ing(self):
+        toast("成功添加")
+        for n in range(39):
+            n = str(n)
+            if n in self.save.data['storagePartial']['ingredients']:
+                self.save.data['storagePartial']['ingredients'][n] += 50
+            else:
+                self.save.data['storagePartial']['ingredients'][n] = 50
+
+    def give_bev(self):
+        toast("成功添加")
+        for n in range(1,29):
+            n = str(n)
+            if n in self.save.data['storagePartial']['beverages']:
+                self.save.data['storagePartial']['beverages'][n] += 50
+            else:
+                self.save.data['storagePartial']['beverages'][n] = 50
+
+    def construct(self):
+        with use_scope('options', clear=True):
+            put_button("所有食材给我来五十份！", onclick=self.give_ing)
+            put_button("所有酒水给我来五十份！", onclick=self.give_bev)
+
+    def saves(self):
+        return self.save

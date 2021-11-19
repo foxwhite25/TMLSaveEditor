@@ -18,6 +18,8 @@ def option_update(file):
             file.op = IngOption(file)
         elif changed['value'] == '酒水':
             file.op = BevOption(file)
+        elif changed['value'] == '一键按钮s':
+            file.op = ButtonsOption(file)
 
 
 def main():
@@ -25,7 +27,7 @@ def main():
     root.withdraw()
     file = SaveFile()
     put_text("选择你要编辑的东西")
-    put_select("module", ["基本属性", "食材", "酒水"])
+    put_select("module", ["基本属性", "食材", "酒水", "一键按钮s"])
     set_scope("options")
     set_scope("save")
     toast(f'加载档案成功，上次保存日期为{file.data["realSaveTimeCode"]}', position='center', color='#2188ff')
